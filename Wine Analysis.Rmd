@@ -1,0 +1,184 @@
+---
+title: "Practice graphs"
+author: "Nada_Saiyed"
+date: "3/11/2020"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library("tidyverse")
+library("ggplot2")
+library("boot")
+library(Hmisc)
+library("Rcmdr")
+library("devtools")
+library("ppcor")
+library("olsrr")
+library("lm.beta")
+library("corrplot")
+```
+
+## R Markdown
+
+This is an R Markdown document. This document deals with EDA and prediction of Wine datasets
+
+Reading wine Datasets
+```{r}
+setwd("E:/UW - Edu/Term 2/MSCI 718 - SDA/Assignments/Asgn3/Wine dataset")
+red.wine<-read.csv("winequality-red.csv",sep=";",colClasses = c(rep("numeric",11)))
+red.wine["color"]=1
+white.wine<-read.csv("winequality-white.csv",sep=";",colClasses = c(rep("numeric",11)))
+white.wine["color"]=0
+wine<-rbind(red.wine,white.wine)
+describe(wine)
+```
+
+
+##ANALYSIS
+
+After planning which predictor variable we can work with, we check for the assumptions that should be met in order to build a regression model to predict the quality of wine.
+1. Predictor variables should be quantitative, conitnuous and unbounded
+ - Can be seen from the data set that they are
+ 
+2. Outcome variable should be quantitative, continuous and unbounded
+ - Even though in the data set, we see that our outcome variable i.e. quantity, is categorical, but in te data description it is given as a range from 1-10. So we can assume that the data is quantitative and continuous. 
+ - We also assume its unbounded.
+ 
+3. Non - zero variance
+ - it can be seen that there is some variance in between every pair of variable.
+ 
+
+Model
+```{r}
+winemodel1<-lm(quality ~ volatile.acidity+alcohol+free.sulfur.dioxide + sulphates, na.action = na.omit, data=wine)
+summary(winemodel)
+confint(winemodel)
+```
+
+We build a coulpe of models more to analyse which one could be a better predicto, pertaining to the fact that these vaiables have almost same individual correlation with the outcome variable
+
+```{r}
+winemodel2<-lm(quality ~ volatile.acidity+alcohol+free.sulfur.dioxide + chlorides , na.action = na.omit, data=wine)
+winemodel3<-lm(quality ~ volatile.acidity+alcohol+free.sulfur.dioxide + residual.sugar , na.action = na.omit, data=wine)
+AIC(winemodel1)
+AIC(winemodel2)
+AIC(winemodel3)
+anova(winemodel1,winemodel2)
+```
+
+So we go with the initial model we chose as the best model
+
+
+Multicolinearity
+
+```{r}
+vif(winemodel1)
+tolerance <- 1/vif(winemodel1)
+tolerance
+```
+ The tolerance levels are pretty much in range and the VIF values are low too. So we can conclude that there is no multicollinearity
+ 
+Residual Analysis
+```{r}
+plot(winemodel1)
+```
+
+1. Durbin watson Test
+```{r}
+durbinWatsonTest(winemodel1)
+```
+It lies within the acceptable range of 1.5 to 2.5, hence can be concluded that residuals are independent
+
+2. From the graph of residuals vs fitted values it can be seen that the mean line is horizontal hence the variance is contant
+
+3.Normal Q-Q plot
+
+
+Assesssing the model
+Residual Tests
+
+```{r}
+wineData<-wine
+#temp<-wineData[-6345,]
+
+wineData$residuals<-resid(winemodel1)
+wineData$stdresiduals<-rstandard(winemodel1)
+wineData$sturesiduals<-rstudent(winemodel1)
+wineData$cooksDistance<-cooks.distance(winemodel1)
+wineData$dfbeta<-dfbeta(winemodel1)
+wineData$dffits<-dffits(winemodel1)
+wineData$leverage<-hatvalues(winemodel1)
+wineData$covratio<-covratio(winemodel1)
+wineData$large.resid<-wineData$stdresiduals>1.96 | wineData$stdresiduals< -1.96
+sum(wineData$large.resid)/nrow(wineData)
+
+```
+Linearity of Residuals
+```{r}
+plot(wineData$residuals) #Looks linear
+
+
+wineData[wineData$large.resid,c("cooksDistance","leverage","covratio")]
+#cooksdistance not >1, leverage 2*(9+1)/nrow(wineData)
+#1 + 30/nrow(wineData) --can remove 6345
+summary(wineData)
+
+wineData[6345,]
+
+```
+
+RESIDUALS
+```{r}
+
+plot(wineData$residuals)
+plot(winemodel3)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
