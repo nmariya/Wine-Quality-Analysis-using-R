@@ -1,6 +1,6 @@
 # Wine-Quality-Analysis-using-R
 ## Objective
-This project aims to analyze the quality of the Portuguese 'Vinho Verde' wine to build a model to predict the quality of the two variants(red and white) of the wine in terms of the selected variables in the best possible way. The prooject could be found [here](https://nmariya.github.io/Wine-Quality-Analysis-using-R/)
+This project aims to analyze the quality of the Portuguese 'Vinho Verde' wine to build a model to predict the quality of the two variants(red and white) of the wine in terms of the selected variables in the best possible way. The project could be found [here](https://nmariya.github.io/Wine-Quality-Analysis-using-R/)
 ## Steps involved in the analysis
 1.  In order to choose the predictor variables for the model, we first checked the correlation among variables. 
 <p align="center">
