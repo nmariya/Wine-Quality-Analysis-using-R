@@ -4,11 +4,11 @@ This project aims to analyze the quality of the Portuguese 'Vinho Verde' wine to
 ## Steps involved in the analysis
 1.  In order to choose the predictor variables for the model, we first checked the correlation among variables. 
 
-![](./images/corr.png, align="center")
+![]("./images/corr.png", align="center")
 
 3.  Chose the factors which would significantly affect the quality of the wine.
 
-![](./images/var.png, align="center")
+![]("./images/var.png", align="center")
 
 5.  Checked on the assumptions for the predictor and outcome variables that should be met to build a regression model to predict the quality of the wine.
 6.  Assessed the model by doing residual analysis(Durbin Watson test), VIF & tolerance values and Cook's distance to check for influencial cases.
